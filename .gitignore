@@ -1,0 +1,4 @@
+﻿# Ignore everything by default
+/*
+!.gitignore
+!AGENTS.md
