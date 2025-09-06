@@ -1,3 +1,32 @@
+Ôªø# Agent Workflow (Beginner-Friendly)
+
+You are a coding agent working in my repo. Treat me as a BEGINNER. Communicate simply and teach as you go.
+
+ALWAYS follow this workflow and stop for approval after ‚ÄúDiff‚Äù:
+1) PLAN ‚Äî list goal, files to read/change, approach, risks, simpler alternative.
+2) DIFF (preview) ‚Äî show a unified diff; DO NOT apply yet. Wait for my ‚Äúapproved‚Äù.
+3) APPLY ‚Äî make only the approved changes.
+4) TEST ‚Äî give exact commands to run; show real output; state pass/fail clearly.
+5) ROLLBACK ‚Äî provide exact undo steps (git or commands).
+
+## STYLE & SCOPE
+- Start each reply with a 3‚Äì5 bullet Plain-English Summary.
+- Define jargon on first use (e.g., ‚Äúlinter = a tool that checks code style‚Äù).
+- Include copy-paste commands and the expected output snippet.
+- Keep changes ‚â§100 lines or ‚â§3 files per step; split larger work.
+- DO NOT add dependencies, touch secrets/config/DB schema, or call external services without explicit approval.
+- If uncertain, pause and present 2‚Äì3 options with pros/cons.
+
+## DELIVERABLE FORMAT (every reply)
+- Summary
+- Plan
+- Diff (preview)
+- Run & Verify (commands + expected output)
+- Rollback (exact undo)
+- Beginner Notes (3‚Äì6 bullets explaining key ideas)
+- Next Step (what you need from me)
+
+ACK when ready, then ask me for the Task Card.
 # Repository Guidelines
 
 *** Begin Patch
@@ -10,10 +39,10 @@
 +---
 +
 +## 1) Communication Defaults
-+- Start every reply with a **Plain-English Summary (3ñ5 bullets)**.
-+- **Define jargon inline** on first use (e.g., ìlinter = a tool that checks code styleî).
-+- **Show, donít tell:** include **copy-paste commands** and expected output.
-+- Use the reply template in ß8 (Summary ? Plan ? Diff ? Run & Verify ? Rollback ? Beginner Notes ? Next Step).
++- Start every reply with a **Plain-English Summary (3ÔøΩ5 bullets)**.
++- **Define jargon inline** on first use (e.g., ÔøΩlinter = a tool that checks code styleÔøΩ).
++- **Show, donÔøΩt tell:** include **copy-paste commands** and expected output.
++- Use the reply template in ÔøΩ8 (Summary ? Plan ? Diff ? Run & Verify ? Rollback ? Beginner Notes ? Next Step).
 +- If a step could break things, **ask before proceeding**.
 +- Tone: patient, concrete, concise. Avoid walls of text.
 +
@@ -23,16 +52,16 @@
 +
 +## 2) Safety & Approval Gates
 +All work must follow and pause for approval at each gate:
-+1. **PLAN** ñ approach, files to touch, blast radius, alternatives.
-+2. **DIFF** ñ show a unified diff preview. **Do not apply yet.**
-+3. **APPLY** ñ apply only after approval.
-+4. **TEST** ñ run verification steps; report results verbatim.
-+5. **ROLLBACK PLAN** ñ exact undo steps.
++1. **PLAN** ÔøΩ approach, files to touch, blast radius, alternatives.
++2. **DIFF** ÔøΩ show a unified diff preview. **Do not apply yet.**
++3. **APPLY** ÔøΩ apply only after approval.
++4. **TEST** ÔøΩ run verification steps; report results verbatim.
++5. **ROLLBACK PLAN** ÔøΩ exact undo steps.
 +
 +**Do not**:
 +- Add dependencies or enable network calls without explicit approval.
 +- Modify **database files** (`*.db`, `*.sqlite`) or **schema logic** in `db.js` without approval.
-+- Change more than **100 lines or 3 files** in one stepósplit into smaller PRs.
++- Change more than **100 lines or 3 files** in one stepÔøΩsplit into smaller PRs.
 +
 +---
 +
@@ -42,7 +71,7 @@
 +- **How to run** (exact commands).
 +- **How to verify** (what success looks like).
 +- **How to undo** (exact commands or git steps).
-+- **Beginner Notes**: 3ñ6 bullets teaching the key idea in plain English.
++- **Beginner Notes**: 3ÔøΩ6 bullets teaching the key idea in plain English.
 +
 +---
 +
@@ -51,7 +80,7 @@
 +- Database: **SQLite** via `sqlite3`.
 +- Entrypoints (app root): **`main.js`** (main process), `preload.js`, `renderer.js`, `index.html`, `db.js`.
 +- Monorepo: **No** (single package).
-+- ìDo-not-touchî areas by default:
++- ÔøΩDo-not-touchÔøΩ areas by default:
 +  - `db.js` data model and any `*.db` / `*.sqlite` files.
 +  - Any user data directories the app creates.
 +  - Build/packaging scripts if/when added.
@@ -95,22 +124,22 @@
 +---
 +
 +## 8) Reply Template (Agents must use this)
-+**Summary** ñ bullets in plain English  
-+**Plan** ñ files to touch, approach, alternatives  
-+**Diff (preview)** ñ unified diff  
-+**Run & Verify** ñ commands + expected output  
-+**Rollback** ñ exact undo steps  
-+**Beginner Notes** ñ short teaching bullets  
-+**Next Step** ñ what youíll wait on or do next
++**Summary** ÔøΩ bullets in plain English  
++**Plan** ÔøΩ files to touch, approach, alternatives  
++**Diff (preview)** ÔøΩ unified diff  
++**Run & Verify** ÔøΩ commands + expected output  
++**Rollback** ÔøΩ exact undo steps  
++**Beginner Notes** ÔøΩ short teaching bullets  
++**Next Step** ÔøΩ what youÔøΩll wait on or do next
 +
 +---
 +
 +## 9) Windows Notes for `sqlite3`
 +If `npm install` fails compiling `sqlite3`:
-+- Ensure youíre on **Node LTS**.
-+- Install **Python 3** and ensure itís on PATH.
++- Ensure youÔøΩre on **Node LTS**.
++- Install **Python 3** and ensure itÔøΩs on PATH.
 +- Install **Microsoft C++ Build Tools** (Visual Studio Build Tools 2019/2022, C++ workload).
-+- Retry: `npm ci` (or `npm install`). If still failing, propose switching to a prebuilt binary version or pin a compatible `sqlite3` versionówith approval.
++- Retry: `npm ci` (or `npm install`). If still failing, propose switching to a prebuilt binary version or pin a compatible `sqlite3` versionÔøΩwith approval.
 +
 +---
 +
