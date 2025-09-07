@@ -1,0 +1,702 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1e3c72">
+        <!-- iOS PWA enhancements -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icons/icon-192.png"><title>Equipment Inspection Checklist</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .inspection-info {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .timer {
+            background: #ff6b35;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .progress-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            height: 25px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .inspection-item {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #2a5298;
+        }
+
+        .inspection-item.critical {
+            border-left: 5px solid #dc3545;
+            background: #fff9f9;
+        }
+
+        .critical-banner {
+            background: linear-gradient(45deg, #dc3545, #ff6b6b);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .item-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .photo-required {
+            background: #ff6b35;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .item-description {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .inspection-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .option-btn {
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .option-btn.good {
+            border-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .option-btn.fair {
+            border-color: #ffc107;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .option-btn.poor {
+            border-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .photo-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .photo-section.required {
+            border-color: #ff6b35;
+            background: #fff5f0;
+        }
+
+        .photo-upload input {
+            display: none;
+        }
+
+        .photo-upload label {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #2a5298;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .photo-upload label:hover {
+            background: #1e3c72;
+        }
+
+        .notes-section textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-family: inherit;
+            resize: vertical;
+            margin-top: 1rem;
+        }
+
+        .submit-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #1e3c72;
+        }
+
+        .btn-success {
+            background: #28a745;
+            font-size: 1.2rem;
+            padding: 1.5rem 3rem;
+        }
+
+        .points-preview {
+            background: linear-gradient(45deg, #ffc107, #ff8c00);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+
+        .warning-banner {
+            background: #dc3545;
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="manifest" href="manifest.webmanifest">
+    <script src="pwa.js"></script>
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <button class="btn" onclick="goBack()" style="background: #6c757d; padding: 0.5rem 1rem;">
+                ← Back
+            </button>
+            <div class="inspection-info">
+                <span id="equipmentInfo">Equipment Inspection</span>
+                <br><small id="inspectionDate" style="color: #666;">Date: Loading...</small>
+            </div>
+        </div>
+        <div class="timer" id="timer">⏱️ 00:00</div>
+    </div>
+
+    <div class="container">
+        <div class="progress-section">
+            <h2>Inspection Progress</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%">0% Complete</div>
+            </div>
+            <p id="progressText">Complete all items to earn your points!</p>
+        </div>
+
+        <!-- Dynamic inspection items will be loaded here -->
+        <div id="inspectionItems"></div>
+
+        <div class="submit-section">
+            <div class="points-preview">
+                🏆 Inspection Value: <span id="pointsPreview">200</span> Points Available!
+                <br><small>+50 Daily Bonus • +30 Streak Bonus • +20 Thoroughness Bonus</small>
+            </div>
+            
+            <div id="warningBanner" class="warning-banner" style="display: none;">
+                ⚠️ Please complete all required photos before submitting!
+            </div>
+            
+            <button class="btn btn-success" onclick="submitInspection()">
+                🎯 Submit Inspection & Earn Points
+            </button>
+            <br>
+            <button class="btn" onclick="saveDraft()">💾 Save as Draft</button>
+        </div>
+    </div>
+
+    <script>
+        let startTime = new Date();
+        let inspectionData = {};
+        let photosUploaded = {};
+        let photoRefs = {};
+        let totalItems = 0;
+        let requiredPhotos = [];
+        let currentEquipment = '';
+
+        // Equipment-specific inspection templates
+        const equipmentInspections = {
+            excavator: {
+                icon: '🦾',
+                items: [
+                    {
+                        id: 'engine',
+                        title: '🔧 Engine Compartment',
+                        description: 'Check engine oil level, coolant level, air filter condition, and look for any leaks or unusual wear.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'hydraulics',
+                        title: '🔩 Hydraulic System',
+                        description: 'Inspect hydraulic fluid levels, check for leaks at cylinders and hoses, test boom and bucket operation.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'tracks',
+                        title: '🚜 Track System',
+                        description: 'Examine track pads for wear, check track tension, inspect drive sprockets and idler wheels.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'boom_bucket',
+                        title: '🦴 Boom & Bucket Assembly',
+                        description: 'Check boom cylinder seals, bucket cutting edge wear, bucket teeth condition, and hydraulic quick-couplers.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'cabin',
+                        title: '🪟 Operator Cabin',
+                        description: 'Check seat condition, ROPS/FOPS integrity, mirrors, windows, joystick operation, and dashboard warning lights.',
+                        photoRequired: false
+                    },
+                    {
+                        id: 'safety',
+                        title: '🧯 FIRE EXTINGUISHER & Safety Features',
+                        description: '🔥 CRITICAL: Check fire extinguisher pressure gauge, expiration date, and mounting bracket security. Also verify backup alarm, warning lights, first aid kit, and safety decals are present and functional.',
+                        photoRequired: true,
+                        critical: true
+                    }
+                ]
+            },
+            bulldozer: {
+                icon: '🚧',
+                items: [
+                    {
+                        id: 'engine',
+                        title: '🔧 Engine Compartment',
+                        description: 'Check engine oil level, coolant level, air filter condition, and look for any leaks or unusual wear.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'tracks',
+                        title: '🚜 Track System',
+                        description: 'Examine track pads for wear, check track tension, inspect drive sprockets and idler wheels.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'blade',
+                        title: '🔪 Blade Assembly',
+                        description: 'Check blade cutting edge wear, blade lift cylinders, tilt cylinders, and hydraulic connections.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'ripper',
+                        title: '⚡ Ripper Assembly',
+                        description: 'Inspect ripper shank wear, ripper lift cylinder, hydraulic lines, and mounting points.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'cabin',
+                        title: '🪟 Operator Cabin',
+                        description: 'Check seat condition, ROPS/FOPS integrity, mirrors, windows, joystick operation, and dashboard warning lights.',
+                        photoRequired: false
+                    },
+                    {
+                        id: 'safety',
+                        title: '🧯 FIRE EXTINGUISHER & Safety Features',
+                        description: '🔥 CRITICAL: Check fire extinguisher pressure gauge, expiration date, and mounting bracket security. Also verify backup alarm, warning lights, first aid kit, and safety decals are present and functional.',
+                        photoRequired: true,
+                        critical: true
+                    }
+                ]
+            },
+            loader: {
+                icon: '🏗️',
+                items: [
+                    {
+                        id: 'engine',
+                        title: '🔧 Engine Compartment',
+                        description: 'Check engine oil level, coolant level, air filter condition, and look for any leaks or unusual wear.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'tires',
+                        title: '🛞 Tire System',
+                        description: 'Inspect tire tread depth, sidewall condition, proper inflation, and check for cuts or punctures.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'bucket',
+                        title: '🪣 Bucket & Loader Arms',
+                        description: 'Check bucket cutting edge, loader arm cylinders, bucket curl cylinders, and hydraulic quick-couplers.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'hydraulics',
+                        title: '🔩 Hydraulic System',
+                        description: 'Inspect hydraulic fluid levels, check for leaks at cylinders and hoses, test loader and bucket operation.',
+                        photoRequired: true
+                    },
+                    {
+                        id: 'cabin',
+                        title: '🪟 Operator Cabin',
+                        description: 'Check seat condition, ROPS/FOPS integrity, mirrors, windows, joystick operation, and dashboard warning lights.',
+                        photoRequired: false
+                    },
+                    {
+                        id: 'safety',
+                        title: '🧯 FIRE EXTINGUISHER & Safety Features',
+                        description: '🔥 CRITICAL: Check fire extinguisher pressure gauge, expiration date, and mounting bracket security. Also verify backup alarm, warning lights, first aid kit, and safety decals are present and functional.',
+                        photoRequired: true,
+                        critical: true
+                    }
+                ]
+            }
+        };
+
+        // Timer functionality
+        function updateTimer() {
+            const now = new Date();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `⏱️ ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        setInterval(updateTimer, 1000);
+
+        function loadEquipmentInspection(equipmentType) {
+            const inspection = equipmentInspections[equipmentType];
+            if (!inspection) return;
+
+            currentEquipment = equipmentType;
+            totalItems = inspection.items.length;
+            requiredPhotos = inspection.items.filter(item => item.photoRequired).map(item => item.id);
+
+            const container = document.getElementById('inspectionItems');
+            container.innerHTML = '';
+
+            inspection.items.forEach(item => {
+                const itemHtml = `
+                    <div class="inspection-item ${item.critical ? 'critical' : ''}" data-item="${item.id}">
+                        ${item.critical ? '<div class="critical-banner">🔥 CRITICAL SAFETY ITEM - REQUIRED FOR OPERATION</div>' : ''}
+                        <div class="item-header">
+                            <div class="item-title">${item.title}</div>
+                            ${item.photoRequired ? '<div class="photo-required">📷 Photo Required</div>' : ''}
+                        </div>
+                        <div class="item-description">
+                            ${item.description}
+                        </div>
+                        <div class="inspection-options">
+                            <div class="option-btn" onclick="selectOption(this, '${item.id}', 'good')">
+                                ✅ Good<br><small>No issues found</small>
+                            </div>
+                            <div class="option-btn" onclick="selectOption(this, '${item.id}', 'fair')">
+                                ⚠️ Fair<br><small>Minor issues</small>
+                            </div>
+                            <div class="option-btn" onclick="selectOption(this, '${item.id}', 'poor')">
+                                ❌ Poor<br><small>Needs attention</small>
+                            </div>
+                        </div>
+                        ${item.photoRequired ? `
+                        <div class="photo-section required">
+                            <p><strong>📷 Photo Required:</strong> Take a clear photo of the ${item.title.replace(/🔧|🔩|🚜|🦴|🪟|⚠️|🔪|⚡|🏗️|🛞|🪣/g, '').trim()}</p>
+                            <div class="photo-upload">
+                                <input type="file" id="photo-${item.id}" accept="image/*" capture="environment" onchange="handlePhotoUpload(this, '${item.id}')">
+                                <label for="photo-${item.id}">📱 Take Photo</label>
+                            </div>
+                            <div id="photo-preview-${item.id}"></div>
+                        </div>
+                        ` : ''}
+                        <div class="notes-section">
+                            <textarea placeholder="Add any specific notes about this component..." id="notes-${item.id}"></textarea>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHtml;
+            });
+
+            updateProgress();
+        }
+
+        function selectOption(element, item, value) {
+            const options = element.parentNode.querySelectorAll('.option-btn');
+            options.forEach(opt => {
+                opt.classList.remove('good', 'fair', 'poor');
+            });
+
+            element.classList.add(value);
+            inspectionData[item] = value;
+            updateProgress();
+        }
+
+        function handlePhotoUpload(input, item) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(`photo-preview-${item}`);
+                    preview.innerHTML = `
+                        <img src="${e.target.result}" style="max-width: 200px; margin-top: 10px; border-radius: 5px;">
+                        <p style="color: #28a745; font-weight: bold; margin-top: 5px;">✅ Photo uploaded successfully!</p>
+                    `;
+                    photosUploaded[item] = true;
+                    updateProgress();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function updateProgress() {
+            const completedItems = Object.keys(inspectionData).length;
+            const uploadedPhotos = Object.keys(photosUploaded).length;
+            const progress = Math.floor((completedItems / totalItems) * 100);
+            
+            document.getElementById('progressFill').style.width = `${progress}%`;
+            document.getElementById('progressFill').textContent = `${progress}% Complete`;
+            
+            let statusText = `${completedItems}/${totalItems} items completed`;
+            if (uploadedPhotos < requiredPhotos.length) {
+                statusText += ` • ${uploadedPhotos}/${requiredPhotos.length} required photos`;
+            } else if (requiredPhotos.length > 0) {
+                statusText += ` • All photos uploaded! 📷✅`;
+            }
+            
+            document.getElementById('progressText').textContent = statusText;
+        }
+
+        async function submitInspection() {
+            if (Object.keys(inspectionData).length < totalItems) {
+                alert('Please complete all inspection items before submitting.');
+                return;
+            }
+
+            const missingPhotos = requiredPhotos.filter(item => !photoRefs[item]);
+            if (missingPhotos.length > 0) {
+                document.getElementById('warningBanner').style.display = 'block';
+                document.getElementById('warningBanner').textContent = 
+                    `⚠️ Please upload photos for: ${missingPhotos.join(', ').replace(/_/g, ' ')}`;
+                return;
+            }
+
+            let points = 100;
+            points += 50; // Daily bonus
+            points += 30; // Streak bonus
+            
+            const notes = document.querySelectorAll('textarea');
+            let notesCompleted = 0;
+            notes.forEach(note => {
+                if (note.value.trim().length > 10) notesCompleted++;
+            });
+            points += notesCompleted * 10;
+
+            const goodRatings = Object.values(inspectionData).filter(v => v === 'good').length;
+            points += goodRatings * 5;
+
+            const elapsed = Math.floor((new Date() - startTime) / 1000);
+            if (elapsed >= 300 && elapsed <= 900) {
+                points += 25;
+            }
+
+            const inspection = {
+                ...JSON.parse(localStorage.getItem('currentInspection')),
+                data: inspectionData,
+                photos: photoRefs,
+                notes: {},
+                completedAt: new Date().toISOString(),
+                timeSpent: elapsed,
+                pointsEarned: points
+            };
+
+            notes.forEach(note => {
+                const item = note.id.replace('notes-', '');
+                inspection.notes[item] = note.value;
+            });
+
+            let inspections = JSON.parse(localStorage.getItem('completedInspections') || '[]');
+            inspections.push(inspection);
+            localStorage.setItem('completedInspections', JSON.stringify(inspections));
+
+            let stats = JSON.parse(localStorage.getItem('inspectionStats') || '{}');
+            stats.points = (stats.points || 0) + points;
+            stats.totalInspections = (stats.totalInspections || 0) + 1;
+            stats.dailyInspections = (stats.dailyInspections || 0) + 1;
+            stats.streak = (stats.streak || 0) + 1;
+            stats.level = Math.floor(stats.points / 1000) + 1;
+            localStorage.setItem('inspectionStats', JSON.stringify(stats));
+
+            alert(`🎉 Inspection Complete!\n\nPoints Earned: ${points}\nTotal Points: ${stats.points}\nCurrent Streak: ${stats.streak} days\n\nGreat job on completing a thorough inspection!`);
+            window.location.href = 'equipment-inspection-app.html';
+        }
+
+        async function saveDraft() {
+            const draft = {
+                ...JSON.parse(localStorage.getItem('currentInspection')),
+                status: 'draft',
+                data: inspectionData,
+                photos: photoRefs,
+                savedAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('inspectionDraft', JSON.stringify(draft));
+            if (window.AppStorage && AppStorage.saveInspection) { try { await AppStorage.saveInspection(draft); } catch (e) {} }
+            alert('💾 Draft saved! You can continue this inspection later.');
+            
+            if (confirm('Would you like to return to the main menu?')) {
+                goBack();
+            }
+        }
+        
+        function goBack() {
+            if (Object.keys(inspectionData).length > 0) {
+                if (!confirm('Are you sure you want to leave? Your progress will be lost unless you save as draft first.')) {
+                    return;
+                }
+            }
+            
+            window.location.href = 'equipment-inspection-app.html';
+        }
+
+        // Auto-save a draft on page exit to avoid data loss
+        window.addEventListener('beforeunload', async () => {
+            try {
+                const base = JSON.parse(localStorage.getItem('currentInspection') || '{}');
+                const draft = { ...base, status: 'draft', data: inspectionData, photos: photoRefs, savedAt: new Date().toISOString() };
+                if (window.AppStorage && AppStorage.saveInspection) { await AppStorage.saveInspection(draft); }
+            } catch (e) {}
+        });
+
+        // Override upload to persist photos to IndexedDB (mobile-friendly)
+        async function handlePhotoUpload(input, item) {
+            const file = input.files[0];
+            if (!file) return;
+            try {
+                if (window.AppStorage && AppStorage.savePhoto) {
+                    const id = await AppStorage.savePhoto(file);
+                    photoRefs[item] = id;
+                }
+            } catch (e) {}
+            const preview = document.getElementById(`photo-preview-${item}`);
+            const url = URL.createObjectURL(file);
+            preview.innerHTML = `
+                <img src="${url}" style="max-width: 200px; margin-top: 10px; border-radius: 5px;">
+                <p style=\"color: #28a745; font-weight: bold; margin-top: 5px;\">Photo uploaded successfully!</p>
+            `;
+            photosUploaded[item] = true;
+            updateProgress();
+        }
+
+        // Initialize page
+        window.onload = function() {
+            const current = JSON.parse(localStorage.getItem('currentInspection') || '{}');
+            if (current.equipment && current.equipmentId) {
+                const inspection = equipmentInspections[current.equipment];
+                if (inspection) {
+                    document.getElementById('equipmentInfo').textContent = 
+                        `${inspection.icon} ${current.equipment.charAt(0).toUpperCase() + current.equipment.slice(1)} ${current.equipmentId} Inspection`;
+                    
+                    // Display inspection date and job info
+                    const dateInfo = `Date: ${current.inspectionDate || new Date().toLocaleDateString()} | Job: ${current.jobName || 'N/A'} | Location: ${current.location || 'N/A'}`;
+                    document.getElementById('inspectionDate').textContent = dateInfo;
+                    
+                    loadEquipmentInspection(current.equipment);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,452 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1e3c72">
+        <!-- iOS PWA enhancements -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <title>Heavy Equipment Inspection App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: #fff;
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background: #ff6b35;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .streak-badge {
+            background: #28a745;
+        }
+
+        .points-badge {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .screen {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .equipment-card {
+            border: 3px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .equipment-card:hover {
+            border-color: #2a5298;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .equipment-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .equipment-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2a5298;
+        }
+
+        .equipment-units {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            background: #1e3c72;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .form-group select, .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .incentive-banner {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .daily-bonus {
+            background: #28a745;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-left: 1rem;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #28a745, #20c997);
+            height: 20px;
+            transition: width 0.3s ease;
+        }
+
+        .leaderboard {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 2rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .rank {
+            font-weight: bold;
+            color: #2a5298;
+        }
+    </style>
+    <link rel="stylesheet" href="mobile.css">
+    <link rel="manifest" href="manifest.webmanifest">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🚜 Equipment Inspector Pro</div>
+        <div class="user-stats">
+            <div class="stat-badge streak-badge" id="streakBadge">🔥 0 Day Streak</div>
+            <div class="stat-badge points-badge" id="pointsBadge">⭐ 0 Points</div>
+            <div class="stat-badge" id="levelBadge">Level 1</div>
+            <button class="btn" onclick="supervisorLogin()" style="margin-left: 1rem; padding: 0.5rem 1rem;">
+                👨‍💼 Supervisor Portal
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Equipment Selection Screen -->
+        <div id="equipmentScreen" class="screen active">
+            <div class="incentive-banner">
+                <h2>🎯 Daily Challenge: Complete 3 Inspections for Bonus Points!</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="dailyProgress" style="width: 0%"></div>
+                </div>
+                <span id="dailyStatus">0/3 Inspections Complete Today</span>
+                <span class="daily-bonus">+50 Bonus Points Available!</span>
+            </div>
+
+            <h1>Select Equipment to Inspect</h1>
+            <p>Choose the equipment you're about to inspect. Photos will be required for verification.</p>
+
+            <div class="equipment-grid">
+                <div class="equipment-card" onclick="selectEquipment('excavator')">
+                    <div class="equipment-icon">🦾</div>
+                    <div class="equipment-title">Excavators</div>
+                    <div class="equipment-units">Track Hoe, Mini Excavator</div>
+                </div>
+
+                <div class="equipment-card" onclick="selectEquipment('bulldozer')">
+                    <div class="equipment-icon">🚧</div>
+                    <div class="equipment-title">Bulldozers</div>
+                    <div class="equipment-units">Dozer, Track Dozer</div>
+                </div>
+
+                <div class="equipment-card" onclick="selectEquipment('loader')">
+                    <div class="equipment-icon">🏗️</div>
+                    <div class="equipment-title">Front End Loaders</div>
+                    <div class="equipment-units">Wheel Loader, Skid Steer</div>
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                <h3>🏆 This Week's Top Inspectors</h3>
+                <div class="leaderboard-item">
+                    <span><span class="rank">#1</span> Mike Johnson</span>
+                    <span>2,450 pts</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span><span class="rank">#2</span> Sarah Davis</span>
+                    <span>2,380 pts</span>
+                </div>
+                <div class="leaderboard-item">
+                    <span><span class="rank">#3</span> You</span>
+                    <span id="yourPoints">2,250 pts</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equipment Details Screen -->
+        <div id="detailsScreen" class="screen">
+            <h1 id="equipmentTitle">Equipment Details</h1>
+            
+            <div class="form-group">
+                <label for="equipmentId">Equipment ID/Number:</label>
+                <input type="text" id="equipmentId" placeholder="Enter equipment ID (e.g., EX-001)" required>
+            </div>
+
+            <div class="form-group">
+                <label for="operatorName">Your Name:</label>
+                <input type="text" id="operatorName" placeholder="Enter your name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="jobName">Job/Project Name:</label>
+                <input type="text" id="jobName" placeholder="Enter job or project name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location/Site:</label>
+                <input type="text" id="location" placeholder="Enter work location or site address" required>
+            </div>
+
+            <div class="form-group">
+                <label for="shift">Shift:</label>
+                <select id="shift" required>
+                    <option value="">Select Shift</option>
+                    <option value="day">Day Shift</option>
+                    <option value="night">Night Shift</option>
+                    <option value="weekend">Weekend</option>
+                </select>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn" onclick="goBack()">← Back</button>
+                <button class="btn btn-success" onclick="startInspection()">Start Inspection →</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="pwa.js"></script>
+    <script>
+        let currentEquipment = '';
+        let userStats = {
+            points: 0,
+            streak: 0,
+            level: 1,
+            dailyInspections: 0,
+            totalInspections: 0
+        };
+
+        // Load user stats from localStorage
+        function loadUserStats() {
+            const saved = localStorage.getItem('inspectionStats');
+            if (saved) {
+                userStats = JSON.parse(saved);
+                updateStatsDisplay();
+            }
+        }
+
+        // Save user stats
+        function saveUserStats() {
+            localStorage.setItem('inspectionStats', JSON.stringify(userStats));
+        }
+
+        // Update stats display
+        function updateStatsDisplay() {
+            document.getElementById('streakBadge').textContent = `🔥 ${userStats.streak} Day Streak`;
+            document.getElementById('pointsBadge').textContent = `⭐ ${userStats.points} Points`;
+            document.getElementById('levelBadge').textContent = `Level ${userStats.level}`;
+            document.getElementById('dailyProgress').style.width = `${(userStats.dailyInspections / 3) * 100}%`;
+            document.getElementById('dailyStatus').textContent = `${userStats.dailyInspections}/3 Inspections Complete Today`;
+            document.getElementById('yourPoints').textContent = `${userStats.points} pts`;
+        }
+
+        function selectEquipment(type) {
+            currentEquipment = type;
+            const titles = {
+                'excavator': '🦾 Excavator Inspection',
+                'bulldozer': '🚧 Bulldozer Inspection', 
+                'loader': '🏗️ Front End Loader Inspection'
+            };
+            
+            document.getElementById('equipmentTitle').textContent = titles[type];
+            showScreen('detailsScreen');
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function goBack() {
+            showScreen('equipmentScreen');
+        }
+
+        function startInspection() {
+            const equipmentId = document.getElementById('equipmentId').value;
+            const operatorName = document.getElementById('operatorName').value;
+            const jobName = document.getElementById('jobName').value;
+            const location = document.getElementById('location').value;
+            const shift = document.getElementById('shift').value;
+
+            if (!equipmentId || !operatorName || !jobName || !location || !shift) {
+                alert('Please fill in all fields before starting inspection.');
+                return;
+            }
+
+            // Store inspection details
+            localStorage.setItem('currentInspection', JSON.stringify({
+                equipment: currentEquipment,
+                equipmentId: equipmentId,
+                operator: operatorName,
+                jobName: jobName,
+                location: location,
+                shift: shift,
+                startTime: new Date().toISOString(),
+                inspectionDate: new Date().toLocaleDateString()
+            }));
+
+            // Redirect to dynamic inspection checklist
+            window.location.href = 'inspection-checklist-dynamic.html';
+        }
+
+        function getInspectionPoints() {
+            let basePoints = 100;
+            
+            // Streak multiplier
+            if (userStats.streak > 0) {
+                basePoints += userStats.streak * 10;
+            }
+            
+            // Daily bonus
+            if (userStats.dailyInspections < 3) {
+                basePoints += 50;
+            }
+            
+            return basePoints;
+        }
+
+        function supervisorLogin() {
+            const password = prompt('Enter supervisor password:');
+            
+            // Simple password check (in production, this would be more secure)
+            if (password === 'supervisor123' || password === 'admin') {
+                localStorage.setItem('supervisorLoggedIn', 'true');
+                window.location.href = 'supervisor-dashboard.html';
+            } else if (password !== null) {
+                alert('❌ Incorrect password. Please contact your administrator.');
+            }
+        }
+
+        // Initialize app
+        window.onload = function() {
+            loadUserStats();
+            updateStatsDisplay();
+        };
+    </script>
+</body>
+</html>

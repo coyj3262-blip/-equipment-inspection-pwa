@@ -1,0 +1,915 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#1e3c72">
+        <!-- iOS PWA enhancements -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="icons/icon-192.png"><title>Supervisor Dashboard - Equipment Inspections</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f6fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-top: 4px solid #2a5298;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #1e3c72;
+            margin: 1rem 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .progress-ring {
+            width: 120px;
+            height: 120px;
+            margin: 1rem auto;
+        }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-ring .background {
+            stroke: #e0e0e0;
+        }
+
+        .progress-ring .progress {
+            stroke: #28a745;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .inspection-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            max-height: 600px;
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .table-header {
+            background: #2a5298;
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .table-header h2 {
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-overdue {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .photo-indicator {
+            font-size: 1.2rem;
+        }
+
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 0.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+        }
+
+        .btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #1e3c72;
+        }
+
+        .btn-export {
+            background: #28a745;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+
+        .leaderboard {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .leaderboard-header {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .rank {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2a5298;
+            width: 3rem;
+        }
+
+        .operator-info {
+            flex-grow: 1;
+            margin-left: 1rem;
+        }
+
+        .operator-name {
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        .operator-stats {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .points {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff6b35;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 1rem;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .inspection-detail {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .detail-header {
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .photo-item {
+            text-align: center;
+        }
+
+        .photo-placeholder {
+            width: 150px;
+            height: 100px;
+            background: #f0f0f0;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+    </style>
+    <link rel="manifest" href="manifest.webmanifest">
+    <script src="pwa.js"></script>
+    <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+    <div class="header">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div>
+                <h1>👨‍💼 Supervisor Dashboard</h1>
+                <p>Equipment Inspection Tracking & Analytics</p>
+            </div>
+            <a href="equipment-inspection-app.html" id="backToMain" class="btn" style="background: #6c757d; padding: 1rem 2rem;" onclick="logout(); return false;">Back to Main App</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Alert Section -->
+        <div id="alertSection"></div>
+
+        <!-- Dashboard Stats -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">Today's Completion Rate</div>
+                    <div class="card-icon">📊</div>
+                </div>
+                <div style="text-align: center;">
+                    <svg class="progress-ring" viewBox="0 0 120 120">
+                        <circle class="background" cx="60" cy="60" r="54"></circle>
+                        <circle class="progress" cx="60" cy="60" r="54" 
+                                stroke-dasharray="339.29" stroke-dashoffset="203.57" id="completionRing"></circle>
+                    </svg>
+                    <div class="stat-number" id="completionRate">75%</div>
+                    <div class="stat-label">Inspections Complete</div>
+                </div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">Total Inspections</div>
+                    <div class="card-icon">✅</div>
+                </div>
+                <div class="stat-number" id="totalInspections">24</div>
+                <div class="stat-label">Completed Today</div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">Photo Verification</div>
+                    <div class="card-icon">📷</div>
+                </div>
+                <div class="stat-number" id="photoVerification">96%</div>
+                <div class="stat-label">With Required Photos</div>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <div class="card-title">Average Time</div>
+                    <div class="card-icon">⏱️</div>
+                </div>
+                <div class="stat-number" id="avgTime">8.2</div>
+                <div class="stat-label">Minutes per Inspection</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <div class="filter-group">
+                <label>Date Range:</label>
+                <input type="date" id="startDate">
+                <span>to</span>
+                <input type="date" id="endDate">
+            </div>
+            <div class="filter-group">
+                <label>Project:</label>
+                <select id="projectFilter">
+                    <option value="">All Projects</option>
+                    <option value="Highway Bridge Project">Highway Bridge Project</option>
+                    <option value="Site Prep - West Lot">Site Prep - West Lot</option>
+                    <option value="Material Loading">Material Loading</option>
+                    <option value="Emergency Repair">Emergency Repair</option>
+                    <option value="Foundation Dig">Foundation Dig</option>
+                    <option value="Road Clearing">Road Clearing</option>
+                    <option value="Debris Removal">Debris Removal</option>
+                    <option value="Utility Installation">Utility Installation</option>
+                    <option value="Material Transport">Material Transport</option>
+                    <option value="Grading Work">Grading Work</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Status:</label>
+                <select id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="overdue">Overdue</option>
+                </select>
+            </div>
+                        <div class="filter-group">
+                <label>Operator:</label>
+                <input type="text" id="operatorFilter" placeholder="e.g., Mike Johnson">
+            </div>
+            <div class="filter-group">
+                <label>Min Completed:</label>
+                <input type="number" id="minCompletedFilter" value="0" min="0" step="1">
+            </div><button class="btn" onclick="applyFilters()">Apply Filters</button>
+            <button class="btn" style="background:#28a745" onclick="seedSampleInspections()">Add Sample Inspections</button>
+</div>
+
+        <!-- Two Column Layout -->
+        <div class="two-col">
+            <!-- Inspections Table -->
+            <div class="inspection-table">
+                <div class="table-header">
+                    <h2>Recent Inspections</h2>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Operator</th>
+                                <th>Equipment ID</th>
+                                <th>Project</th>
+                                <th>Date/Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inspectionTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Leaderboard -->
+            <div class="leaderboard">
+                <div class="leaderboard-header">
+                    <h3>🏆 Top Inspectors This Week</h3>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank">#1</div>
+                    <div class="operator-info">
+                        <div class="operator-name">Mike Johnson</div>
+                        <div class="operator-stats">15 inspections • 7 day streak</div>
+                    </div>
+                    <div class="points">2,450 pts</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank">#2</div>
+                    <div class="operator-info">
+                        <div class="operator-name">Sarah Davis</div>
+                        <div class="operator-stats">14 inspections • 5 day streak</div>
+                    </div>
+                    <div class="points">2,380 pts</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank">#3</div>
+                    <div class="operator-info">
+                        <div class="operator-name">Tom Wilson</div>
+                        <div class="operator-stats">12 inspections • 3 day streak</div>
+                    </div>
+                    <div class="points">2,250 pts</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="rank">#4</div>
+                    <div class="operator-info">
+                        <div class="operator-name">Carlos Martinez</div>
+                        <div class="operator-stats">10 inspections • 1 day streak</div>
+                    </div>
+                    <div class="points">1,890 pts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inspection Detail Modal -->
+    <div id="inspectionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Inspection Details</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            
+            <div class="inspection-detail">
+                <div class="detail-header">📋 Inspection Summary</div>
+                <div class="detail-content">
+                    <div class="detail-item">
+                        <span><strong>Operator:</strong></span>
+                        <span id="detailOperator">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><strong>Equipment:</strong></span>
+                        <span id="detailEquipment">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><strong>Project:</strong></span>
+                        <span id="detailProject">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><strong>Location:</strong></span>
+                        <span id="detailLocation">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><strong>Date/Time:</strong></span>
+                        <span id="detailDateTime">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span><strong>Inspection Time:</strong></span>
+                        <span id="detailDuration">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="inspection-detail">
+                <div class="detail-header">🔍 Inspection Results</div>
+                <div id="inspectionResults">
+                    <!-- Dynamic inspection results will be loaded here -->
+                </div>
+            </div>
+
+            <div class="inspection-detail">
+                <div class="detail-header">📷 Photo Documentation</div>
+                <div class="photo-gallery" id="photoGallery">
+                    <!-- Photos will be loaded here -->
+                </div>
+            </div>
+
+            <div class="inspection-detail">
+                <div class="detail-header">📝 Notes & Comments</div>
+                <div id="inspectionNotes">
+                    <!-- Notes will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate alerts based on data
+        function generateAlerts() {
+            const alertSection = document.getElementById('alertSection');
+            const alerts = [];
+
+            // Check for overdue inspections
+            alerts.push({
+                type: 'danger',
+                message: '⚠️ 3 inspections are overdue and require immediate attention!'
+            });
+
+            // Check for missing photos
+            alerts.push({
+                type: 'warning',
+                message: '📷 2 recent inspections are missing required photos for verification.'
+            });
+
+            alertSection.innerHTML = alerts.map(alert => 
+                `<div class="alert alert-${alert.type}">${alert.message}</div>`
+            ).join('');
+        }
+
+        function applyFilters() {\n            // Re-render table using current filter inputs\n            loadInspections();\n        });
+            alert('Filters applied! In a full implementation, this would filter the inspection data by project name, date range, and status.');
+        }
+
+        function logout() {
+            // Clear supervisor session
+            localStorage.removeItem('supervisorLoggedIn');
+            
+            // Redirect back to main app
+            window.location.assign('equipment-inspection-app.html');
+        }
+
+        function exportData() {
+            // In a real application, this would generate a CSV or PDF report
+            const data = [
+                ['Time', 'Operator', 'Equipment', 'Status', 'Photos', 'Points'],
+                ['08:15 AM', 'Mike Johnson', 'EX-001 Excavator', 'Completed', '4/4', '245'],
+                ['07:45 AM', 'Sarah Davis', 'BD-002 Bulldozer', 'Completed', '3/3', '220'],
+                // ... more data
+            ];
+
+            let csvContent = data.map(row => row.join(',')).join('\\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'inspection-report.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Set default dates
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+            
+            document.getElementById('endDate').value = today;
+            document.getElementById('startDate').value = weekAgo;
+        }
+
+        // Sample inspection data (in production, this would come from a database)
+        const sampleInspections = {
+            'insp-001': {
+                operator: 'Mike Johnson',
+                equipment: 'EX-001 Excavator',
+                project: 'Highway Bridge Project',
+                location: 'Mile Marker 15',
+                dateTime: 'Today 08:15 AM',
+                duration: '12 minutes',
+                results: {
+                    engine: { status: 'Good', notes: 'Oil levels normal, no leaks detected' },
+                    hydraulics: { status: 'Good', notes: 'All cylinders operating smoothly' },
+                    tracks: { status: 'Fair', notes: 'Some wear on left track pads, monitor closely' },
+                    boom_bucket: { status: 'Good', notes: 'Bucket teeth in good condition' },
+                    cabin: { status: 'Good', notes: 'All controls responsive' },
+                    safety: { status: 'Good', notes: 'Fire extinguisher pressure good, exp: 06/2025' }
+                },
+                photos: ['Engine Bay', 'Hydraulic Tank', 'Track Assembly', 'Boom Cylinder', 'Fire Extinguisher'],
+                pointsEarned: 245
+            },
+            'insp-002': {
+                operator: 'Sarah Davis',
+                equipment: 'BD-002 Bulldozer',
+                project: 'Site Prep - West Lot',
+                location: 'Construction Zone A',
+                dateTime: 'Today 07:45 AM',
+                duration: '15 minutes',
+                results: {
+                    engine: { status: 'Good', notes: 'All fluids at proper levels' },
+                    tracks: { status: 'Good', notes: 'Track tension proper, no excessive wear' },
+                    blade: { status: 'Fair', notes: 'Cutting edge shows wear, schedule replacement' },
+                    ripper: { status: 'Good', notes: 'Ripper shank in good condition' },
+                    cabin: { status: 'Good', notes: 'Seat and controls in good working order' },
+                    safety: { status: 'Good', notes: 'Fire extinguisher checked, all safety equipment present' }
+                },
+                photos: ['Engine Compartment', 'Track System', 'Blade Edge', 'Ripper Assembly', 'Safety Equipment'],
+                pointsEarned: 220
+            }
+        };
+
+        function viewInspection(inspectionId) {
+            const inspection = sampleInspections[inspectionId];
+            if (!inspection) {
+                alert('Inspection details not found. In production, this would load from the database.');
+                return;
+            }
+
+            // Populate modal with inspection data
+            document.getElementById('modalTitle').textContent = `${inspection.equipment} Inspection Details`;
+            document.getElementById('detailOperator').textContent = inspection.operator;
+            document.getElementById('detailEquipment').textContent = inspection.equipment;
+            document.getElementById('detailProject').textContent = inspection.project;
+            document.getElementById('detailLocation').textContent = inspection.location;
+            document.getElementById('detailDateTime').textContent = inspection.dateTime;
+            document.getElementById('detailDuration').textContent = inspection.duration;
+
+            // Populate inspection results
+            const resultsContainer = document.getElementById('inspectionResults');
+            resultsContainer.innerHTML = '';
+            
+            Object.entries(inspection.results).forEach(([component, result]) => {
+                const statusColor = result.status === 'Good' ? '#28a745' : result.status === 'Fair' ? '#ffc107' : '#dc3545';
+                const statusIcon = result.status === 'Good' ? '✅' : result.status === 'Fair' ? '⚠️' : '❌';
+                
+                resultsContainer.innerHTML += `
+                    <div class="detail-item">
+                        <span><strong>${component.replace('_', ' & ').replace(/\\b\\w/g, l => l.toUpperCase())}:</strong></span>
+                        <span style="color: ${statusColor};">${statusIcon} ${result.status}</span>
+                    </div>
+                    <div style="margin-left: 1rem; color: #666; font-size: 0.9rem; margin-bottom: 1rem;">
+                        ${result.notes}
+                    </div>
+                `;
+            });
+
+            // Populate photo gallery
+            const photoGallery = document.getElementById('photoGallery');
+            photoGallery.innerHTML = '';
+            
+            inspection.photos.forEach(photoName => {
+                photoGallery.innerHTML += `
+                    <div class="photo-item">
+                        <div class="photo-placeholder">📷 ${photoName}</div>
+                        <small>${photoName}</small>
+                    </div>
+                `;
+            });
+
+            // Show modal
+            document.getElementById('inspectionModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('inspectionModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('inspectionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Load inspections from IndexedDB and populate table/stat cards
+        async function loadInspections() {
+            if (!(window.AppStorage && AppStorage.listInspections)) return;
+            const list = await AppStorage.listInspections();
+            const tbody = document.getElementById('inspectionTableBody');
+            tbody.innerHTML = '';
+            let completed = 0, totalPhotos = 0, requiredCount = 0, totalDurationMin = 0;
+            list.forEach(rec => {
+                const status = rec.status || 'completed';
+                const isCompleted = status === 'completed';
+                if (isCompleted) completed++;
+                const photoCount = rec.photos ? Object.keys(rec.photos).length : 0;
+                totalPhotos += photoCount;
+                requiredCount += photoCount; // treat stored photos as required for now
+                const started = rec.startTime ? new Date(rec.startTime) : (rec.createdAt ? new Date(rec.createdAt) : null);
+                const durationMin = rec.timeSpent ? Math.round(rec.timeSpent / 60) : (started && rec.completedAt ? Math.max(1, Math.round((new Date(rec.completedAt) - started) / 60000)) : 0);
+                totalDurationMin += durationMin;
+                const dateStr = rec.completedAt ? new Date(rec.completedAt).toLocaleString() : (rec.createdAt ? new Date(rec.createdAt).toLocaleString() : '-');
+                const statusClass = isCompleted ? 'status-completed' : 'status-pending';
+                const statusLabel = isCompleted ? 'Completed' : 'Draft';
+                const equipmentLabel = `${(rec.equipmentId||'').toString()}`;
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr>
+                        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+                        <td>${rec.operator || '-'}</td>
+                        <td>${equipmentLabel}</td>
+                        <td>${rec.jobName || '-'}</td>
+                        <td>${dateStr}</td>
+                        <td><button class="btn" style="padding: 0.5rem;" onclick="viewInspection('${rec.id}')">View Details</button></td>
+                    </tr>
+                `);
+            });
+            // Update stat cards if present
+            const totalEl = document.getElementById('totalInspections');
+            if (totalEl) totalEl.textContent = String(completed);
+            const photoEl = document.getElementById('photoVerification');
+            if (photoEl) photoEl.textContent = list.length ? `${Math.min(100, Math.round((totalPhotos / Math.max(1, requiredCount)) * 100))}%` : '0%';
+            const avgEl = document.getElementById('avgTime');
+            if (avgEl) avgEl.textContent = list.length ? (Math.round((totalDurationMin / Math.max(1, list.length)) * 10) / 10) : '0';
+        }
+
+        async function viewInspection(inspectionId) {
+            if (!(window.AppStorage && AppStorage.getInspection)) return;
+            const inspection = await AppStorage.getInspection(inspectionId);
+            if (!inspection) { alert('Inspection not found locally.'); return; }
+            document.getElementById('modalTitle').textContent = `${inspection.equipmentId || inspection.equipment || ''} Inspection Details`;
+            document.getElementById('detailOperator').textContent = inspection.operator || '-';
+            document.getElementById('detailEquipment').textContent = `${inspection.equipment || ''} ${inspection.equipmentId || ''}`.trim();
+            document.getElementById('detailProject').textContent = inspection.jobName || '-';
+            document.getElementById('detailLocation').textContent = inspection.location || '-';
+            document.getElementById('detailDateTime').textContent = inspection.completedAt ? new Date(inspection.completedAt).toLocaleString() : '-';
+            document.getElementById('detailDuration').textContent = inspection.timeSpent ? `${Math.round(inspection.timeSpent/60)} minutes` : '-';
+
+            // Results
+            const resultsContainer = document.getElementById('inspectionResults');
+            resultsContainer.innerHTML = '';
+            if (inspection.data) {
+                Object.entries(inspection.data).forEach(([component, status]) => {
+                    const statusColor = status === 'good' ? '#28a745' : status === 'fair' ? '#ffc107' : '#dc3545';
+                    const label = status.charAt(0).toUpperCase() + status.slice(1);
+                    resultsContainer.insertAdjacentHTML('beforeend', `
+                        <div class="detail-item">
+                            <span><strong>${component.replace('_', ' ')}</strong></span>
+                            <span style="color: ${statusColor};">${label}</span>
+                        </div>
+                    `);
+                });
+            }
+
+            // Notes
+            const notesContainer = document.getElementById('inspectionNotes');
+            notesContainer.innerHTML = '';
+            if (inspection.notes) {
+                Object.entries(inspection.notes).forEach(([k, v]) => {
+                    notesContainer.insertAdjacentHTML('beforeend', `<div style="margin-bottom: 0.5rem;"><strong>${k}:</strong> ${v || ''}</div>`);
+                });
+            }
+
+            // Photos
+            const photoGallery = document.getElementById('photoGallery');
+            photoGallery.innerHTML = '';
+            if (inspection.photos) {
+                for (const [item, pid] of Object.entries(inspection.photos)) {
+                    try {
+                        const url = await AppStorage.getPhotoUrl(pid);
+                        if (url) {
+                            photoGallery.insertAdjacentHTML('beforeend', `
+                                <div class="photo-item"><img src="${url}" style="max-width: 100%; border-radius: 8px;"><small>${item}</small></div>
+                            `);
+                        }
+                    } catch (e) {}
+                }
+            }
+
+            document.getElementById('inspectionModal').style.display = 'block';
+        }
+        async function seedSampleInspections() {
+            if (!(window.AppStorage && AppStorage.saveInspection)) { alert("Storage not available"); return; }
+            const now = Date.now();
+            const days = (n)=> new Date(now - n*24*60*60*1000).toISOString();
+            const samples = [
+              { operator:"Mike Johnson",  equipmentId:"EX-001", jobName:"Highway Bridge Project", status:"completed", createdAt:days(2), completedAt:days(2), timeSpent:12*60 },
+              { operator:"Mike Johnson",  equipmentId:"EX-003", jobName:"Material Loading",       status:"completed", createdAt:days(1), completedAt:days(1), timeSpent:10*60 },
+              { operator:"Sarah Davis",   equipmentId:"BD-002", jobName:"Site Prep - West Lot",  status:"completed", createdAt:days(0), completedAt:days(0), timeSpent:15*60 },
+              { operator:"Sarah Davis",   equipmentId:"EX-001", jobName:"Road Clearing",         status:"completed", createdAt:days(3), completedAt:days(3), timeSpent:9*60 },
+              { operator:"Tom Wilson",    equipmentId:"EX-002", jobName:"Emergency Repair",      status:"pending",   createdAt:days(0) },
+              { operator:"Ava Brown",     equipmentId:"BD-004", jobName:"Material Transport",    status:"completed", createdAt:days(4), completedAt:days(4), timeSpent:11*60 },
+              { operator:"Ava Brown",     equipmentId:"EX-006", jobName:"Grading Work",          status:"completed", createdAt:days(1), completedAt:days(1), timeSpent:8*60 },
+            ];
+            for (const rec of samples) { try { await AppStorage.saveInspection(rec); } catch(e){} }
+            await loadInspections();
+            alert("Sample inspections added.");
+        }
+        // Initialize dashboard
+        window.onload = function() {
+            generateAlerts();
+            setDefaultDates();
+            loadInspections();
+        };
+    </script>
+</body>
+</html>
+
