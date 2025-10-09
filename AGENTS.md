@@ -1,187 +1,38 @@
-﻿# Agent Workflow (Beginner-Friendly)
-
-You are a coding agent working in my repo. Treat me as a BEGINNER. Communicate simply and teach as you go.
-
-ALWAYS follow this workflow and stop for approval after “Diff”:
-1) PLAN — list goal, files to read/change, approach, risks, simpler alternative.
-2) DIFF (preview) — show a unified diff; DO NOT apply yet. Wait for my “approved”.
-3) APPLY — make only the approved changes.
-4) TEST — give exact commands to run; show real output; state pass/fail clearly.
-5) ROLLBACK — provide exact undo steps (git or commands).
-
-## STYLE & SCOPE
-- Start each reply with a minimal Summary: 0–2 bullets or one sentence. Mid-task updates: one sentence max.
- - Define jargon only when asking the user to act or when essential.
- - Include copy-paste commands and expected output only when the user needs to run them.
-- Keep changes ≤100 lines or ≤3 files per step; split larger work.
-- DO NOT add dependencies, touch secrets/config/DB schema, or call external services without explicit approval.
-- If uncertain, pause and present 2–3 options with pros/cons.
-
-## DELIVERABLE FORMAT (every reply)
-- Summary (0–2 bullets or one sentence; mid-task: 1 sentence)
-- Plan
-- Diff (preview)
-- Run & Verify (commands + expected output)
-- Rollback (exact undo)
-- Beginner Notes (3-6 bullets explaining key ideas)
-- Next Step (what you need from me)
-
-ACK when ready, then ask me for the Task Card.
 # Repository Guidelines
 
-*** Begin Patch
-*** Add File: AGENTS.md
-+# AGENTS.md
-+
-+This file tells any coding agent how to work inside this repo.
-+**Audience:** A non-programmer. Explanations must be beginner-friendly.
-+
-+---
-+
-+## 1) Communication Defaults
-+- Start every reply with a **Plain-English Summary (3�5 bullets)**.
-+- **Define jargon inline** on first use (e.g., �linter = a tool that checks code style�).
-+- **Show, don�t tell:** include **copy-paste commands** and expected output.
-+- Use the reply template in �8 (Summary ? Plan ? Diff ? Run & Verify ? Rollback ? Beginner Notes ? Next Step).
-+- If a step could break things, **ask before proceeding**.
-+- Tone: patient, concrete, concise. Avoid walls of text.
-+
-+> Treat the user (Coy) as **new to coding**. Prefer clarity over speed.
-+
-+---
-+
-+## 2) Safety & Approval Gates
-+All work must follow and pause for approval at each gate:
-+1. **PLAN** � approach, files to touch, blast radius, alternatives.
-+2. **DIFF** � show a unified diff preview. **Do not apply yet.**
-+3. **APPLY** � apply only after approval.
-+4. **TEST** � run verification steps; report results verbatim.
-+5. **ROLLBACK PLAN** � exact undo steps.
-+
-+**Do not**:
-+- Add dependencies or enable network calls without explicit approval.
-+- Modify **database files** (`*.db`, `*.sqlite`) or **schema logic** in `db.js` without approval.
-+- Change more than **100 lines or 3 files** in one step�split into smaller PRs.
-+
-+---
-+
-+## 3) Deliverables (Every Task)
-+- **Unified diff** of all changes.
-+- **Why it matters** (one short paragraph).
-+- **How to run** (exact commands).
-+- **How to verify** (what success looks like).
-+- **How to undo** (exact commands or git steps).
-+- **Beginner Notes**: 3�6 bullets teaching the key idea in plain English.
-+
-+---
-+
-+## 4) Project Map
-+- Type: **Desktop app** using **Electron** (JavaScript runtime for desktop apps).
-+- Database: **SQLite** via `sqlite3`.
-+- Entrypoints (app root): **`main.js`** (main process), `preload.js`, `renderer.js`, `index.html`, `db.js`.
-+- Monorepo: **No** (single package).
-+- �Do-not-touch� areas by default:
-+  - `db.js` data model and any `*.db` / `*.sqlite` files.
-+  - Any user data directories the app creates.
-+  - Build/packaging scripts if/when added.
-+
-+---
-+
-+## 5) Tooling & Package Manager
-+- Package manager: **npm** (lockfile: `package-lock.json`).
-+- Node: prefer current **LTS**.
-+- Electron runtime launched via app script.
-+
-+---
-+
-+## 6) Build / Run / Test
-+This project is currently **run-only** (no build/test scripts defined).
-+
-+### Install & Run (Option A: included helper)
-+1) Double-click **`run-me.bat`**  
-+   - It downloads a portable Node (if needed), runs `npm install`, then `npm start`.
-+
-+### Install & Run (Option B: your own Node)
-+```bash
-+# Windows PowerShell (from repo root)
-+npm ci   # or: npm install
-+npm start
-+```
-+**Expected result:** Electron window opens. The console may show Electron startup logs; a SQLite DB file may be created on first use.
-+
-+### Scripts (from package.json)
-+- `start`: `electron .`
-+> If you later add scripts (e.g., `build`, `test`, `lint`), document them here.
-+
-+---
-+
-+## 7) Policies & Conventions
-+- Code style: follow existing patterns; avoid introducing new tooling without approval.
-+- Public behavior changes must include a short doc note and (when tests exist) updated tests.
-+- **Secrets:** never paste secrets into code or prompts; use an `.env.example` pattern if needed.
-+- Commits/PRs: imperative titles (`feat: add X`), include a **Test plan** section.
-+
-+---
-+
-+## 8) Reply Template (Agents must use this)
-+**Summary** � bullets in plain English  
-+**Plan** � files to touch, approach, alternatives  
-+**Diff (preview)** � unified diff  
-+**Run & Verify** � commands + expected output  
-+**Rollback** � exact undo steps  
-+**Beginner Notes** � short teaching bullets  
-+**Next Step** � what you�ll wait on or do next
-+
-+---
-+
-+## 9) Windows Notes for `sqlite3`
-+If `npm install` fails compiling `sqlite3`:
-+- Ensure you�re on **Node LTS**.
-+- Install **Python 3** and ensure it�s on PATH.
-+- Install **Microsoft C++ Build Tools** (Visual Studio Build Tools 2019/2022, C++ workload).
-+- Retry: `npm ci` (or `npm install`). If still failing, propose switching to a prebuilt binary version or pin a compatible `sqlite3` version�with approval.
-+
-+---
-+
-+## 10) Operating Constraints
-+- Default runtime budget: **? 15 min per agent step**, then report back.
-+- Prefer deterministic, local steps; avoid flaky network-dependent actions.
-+- Save any generated logs under `docs/agent-runs/<date>/` if added.
-+
-+---
-+
-+## 11) When In Doubt
-+Pause, summarize options, and ask for a choice.
-+
-*** End Patch
-
 ## Project Structure & Module Organization
-- Source lives in `src/`; tests in `tests/`; docs in `docs/`; helper scripts in `scripts/`; static assets in `assets/`. Monorepos place packages under `packages/*`.
-- Organize modules by feature; each folder owns its code, tests, and fixtures. Re-export a minimal public API via `index.ts`/`__init__.py` where idiomatic.
+- `main.js` drives the Electron main process, window lifecycle, and IPC wiring.
+- `preload.js` exposes the approved bridge API; keep surface area lean and audited.
+- Renderer UI lives in `renderer.js` and `index.html`; the JSA workflow anchors in `renderer.js` under the Inspections v2 views.
+- SQLite access is centralized in `db.js`; treat it as read-only unless a schema change has been signed off.
+- Support assets belong in `assets/`; automated checks and specs go under `tests/`.
 
 ## Build, Test, and Development Commands
-- Use the tooling present in this repo; examples below match common setups:
-  - Node: `npm ci`, `npm run dev` (start locally), `npm run build` (production), `npm test` (unit tests).
-  - Python: `python -m venv .venv` && `.venv\\Scripts\\activate`, `pip install -e .[dev]`, `pytest -q`.
-  - Rust: `cargo build`, `cargo test`, `cargo run`.
-- Lint/format before pushing: `npm run lint` / `ruff check .` / `cargo fmt` (whichever applies).
+- `npm ci` installs dependencies from `package-lock.json` for reproducible builds.
+- `npm start` launches the Electron shell with startup logs.
+- `npm test` executes the Jest suite (or skips if no tests are present).
+- `npm run build` produces a packaged desktop build when release prep is needed.
+- On Windows desktops you can alternatively run `run-me.bat` to start the app with environment defaults.
 
 ## Coding Style & Naming Conventions
-- Honor repo formatters/configs if present: `.prettierrc`, `eslint`, `pyproject.toml` (black/ruff), `.rustfmt.toml`.
-- Indentation: 2 spaces for JS/TS; 4 spaces for Python; use tool defaults for other languages.
-- Naming: `PascalCase` types/classes, `camelCase` functions/variables, `kebab-case` filenames; tests end with `.test.ts` or start with `test_*.py`.
-- Keep lines ≤ 100 chars; write clear docstrings/comments when intent isn’t obvious.
+- JavaScript across main, preload, and renderer: 2-space indent, semicolons, trailing commas where valid.
+- Favor `const` and `let`, async/await over promise chains, and modular helpers over large files.
+- Components and classes use PascalCase, functions and variables use camelCase, files prefer kebab-case or match legacy names.
+- Keep renderer logic responsive; push blocking I/O to the main process or async IPC handlers.
 
 ## Testing Guidelines
-- Frameworks typically used: Jest/Vitest (JS/TS), Pytest (Python), Cargo test (Rust).
-- Place tests in `tests/` mirroring `src/` structure; keep tests fast and deterministic (use fakes over network/IO).
-- Aim for 80%+ line coverage where practical. Examples: `pytest -q --maxfail=1`, `npm test -- --run`, `cargo test --quiet`.
+- Author unit tests as `*.test.js` beside the module or in `tests/` when shared.
+- Use lightweight mocks for SQLite calls; do not open production `.db` files in tests.
+- Aim for Arrange-Act-Assert structure and cover the JSA flow, IPC handlers, and data transforms when feasible.
+- Run `npm test` locally before publishing or opening a pull request.
 
 ## Commit & Pull Request Guidelines
-- Conventional Commits: `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `chore:`; imperative subject ≤ 72 chars (e.g., `feat(api): add pagination`).
-- PRs include: clear description, linked issues (`Closes #123`), screenshots for UI changes, updated docs/tests, and passing CI/lint.
+- Follow Conventional Commits such as `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`.
+- Keep commits focused; include rationale and issue references (for example `Closes #123`).
+- Pull requests need a clear summary, linked tickets, UI screenshots for renderer changes, and manual test notes.
+- Confirm linting/tests pass and avoid bundling unrelated refactors.
 
 ## Security & Configuration Tips
-- Never commit secrets. Use `.env` (ignored) and provide `.env.example`. Rotate leaked tokens immediately.
-- Keep dependencies current; run `npm audit` / `pip-audit` / `cargo audit` if applicable.
-
+- Never commit secrets; rely on `.env` with a mirrored `.env.example` and keep `.env` ignored.
+- Maintain `contextIsolation: true` and `nodeIntegration: false`; whitelist IPC channels explicitly.
+- Back up user data before migrations and treat SQLite files as read-only unless approved.
