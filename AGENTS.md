@@ -1,38 +1,39 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- `main.js` drives the Electron main process, window lifecycle, and IPC wiring.
-- `preload.js` exposes the approved bridge API; keep surface area lean and audited.
-- Renderer UI lives in `renderer.js` and `index.html`; the JSA workflow anchors in `renderer.js` under the Inspections v2 views.
-- SQLite access is centralized in `db.js`; treat it as read-only unless a schema change has been signed off.
-- Support assets belong in `assets/`; automated checks and specs go under `tests/`.
+- Monorepo-style layout with app folders and small utilities at the root.
+- `inspection-v2/` — Vite + TypeScript + Firebase app (own `src/`, configs, `dist/`).
+- `dashboard/` — static site (HTML/CSS/JS).
+- Root contains utilities (`*.py`, `*.js`) and data/assets (`*.kml`, `*.json`, `*.html`).
+- Each app owns its config and lockfiles; scope changes to the relevant folder.
 
 ## Build, Test, and Development Commands
-- `npm ci` installs dependencies from `package-lock.json` for reproducible builds.
-- `npm start` launches the Electron shell with startup logs.
-- `npm test` executes the Jest suite (or skips if no tests are present).
-- `npm run build` produces a packaged desktop build when release prep is needed.
-- On Windows desktops you can alternatively run `run-me.bat` to start the app with environment defaults.
+- inspection-v2 (dev): `cd inspection-v2 && npm ci && npm run dev`
+- inspection-v2 (build/preview): `npm run build && npm run preview`
+- dashboard (serve locally): `cd dashboard && python -m http.server 8000` (or `npx serve`)
+- Playwright tools (root): `npx playwright install`; run `npx playwright test` if tests exist.
 
 ## Coding Style & Naming Conventions
-- JavaScript across main, preload, and renderer: 2-space indent, semicolons, trailing commas where valid.
-- Favor `const` and `let`, async/await over promise chains, and modular helpers over large files.
-- Components and classes use PascalCase, functions and variables use camelCase, files prefer kebab-case or match legacy names.
-- Keep renderer logic responsive; push blocking I/O to the main process or async IPC handlers.
+- TypeScript/JS: 2-space indent; lint via ESLint in `inspection-v2/` (`eslint.config.js`).
+- Filenames: kebab-case for web assets, PascalCase for components, snake_case for Python.
+- Python: 4-space indent; prefer f-strings; format with `black` if available.
+- JSON/configs: 2-space indent; keep stable key ordering and minimal diffs.
 
 ## Testing Guidelines
-- Author unit tests as `*.test.js` beside the module or in `tests/` when shared.
-- Use lightweight mocks for SQLite calls; do not open production `.db` files in tests.
-- Aim for Arrange-Act-Assert structure and cover the JSA flow, IPC handlers, and data transforms when feasible.
-- Run `npm test` locally before publishing or opening a pull request.
+- inspection-v2: place unit tests as `src/**/*.test.ts`; e2e under `e2e/` using Playwright.
+- Keep tests deterministic; mock network/Firebase calls; fixtures under `tests/fixtures/` (create if absent).
+- For small scripts, include minimal example-based tests or usage notes alongside the file.
 
 ## Commit & Pull Request Guidelines
-- Follow Conventional Commits such as `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`.
-- Keep commits focused; include rationale and issue references (for example `Closes #123`).
-- Pull requests need a clear summary, linked tickets, UI screenshots for renderer changes, and manual test notes.
-- Confirm linting/tests pass and avoid bundling unrelated refactors.
+- Use Conventional Commits (e.g., `feat:`, `fix:`, `docs:`, `chore:`, `refactor:`, `test:`).
+- PRs include purpose, linked issues, test steps, and UI screenshots when applicable.
+- Update READMEs/configs if behavior or contracts change.
 
 ## Security & Configuration Tips
-- Never commit secrets; rely on `.env` with a mirrored `.env.example` and keep `.env` ignored.
-- Maintain `contextIsolation: true` and `nodeIntegration: false`; whitelist IPC channels explicitly.
-- Back up user data before migrations and treat SQLite files as read-only unless approved.
+- Never commit secrets. Copy `inspection-v2/.env.example` to `.env.local`.
+- Keep Firebase rules in sync (`database.rules.json`, `storage.rules`); deploy from `inspection-v2/` when needed.
+- Ignore large/derived files; prefer data samples over full datasets.
+
+## Agent-Specific Instructions
+- This AGENTS.md applies repo-wide; nested `AGENTS.md` files in subfolders take precedence.
+- Follow app-local tooling and configs; keep changes minimal and localized.
