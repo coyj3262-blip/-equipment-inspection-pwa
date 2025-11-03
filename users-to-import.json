@@ -1,0 +1,26 @@
+{
+  "users": [
+    {
+      "localId": "supervisor001",
+      "email": "supervisor@mtaftlogging.com",
+      "displayName": "Sarah Johnson",
+      "passwordHash": "Supervisor123!",
+      "salt": "",
+      "customAttributes": "{\"role\":\"supervisor\",\"supervisor\":true}",
+      "emailVerified": false,
+      "disabled": false,
+      "createdAt": "2025-10-19T10:00:00.000Z"
+    },
+    {
+      "localId": "employee001",
+      "email": "operator@mtaftlogging.com",
+      "displayName": "Mike Thompson",
+      "passwordHash": "Operator123!",
+      "salt": "",
+      "customAttributes": "{\"role\":\"employee\",\"supervisor\":false}",
+      "emailVerified": false,
+      "disabled": false,
+      "createdAt": "2025-10-19T10:00:00.000Z"
+    }
+  ]
+}

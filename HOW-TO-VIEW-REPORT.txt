@@ -1,0 +1,54 @@
+========================================
+HOW TO VIEW THE INTERACTIVE TEST REPORT
+========================================
+
+QUICK START:
+1. Unzip "playwright-test-report.zip"
+2. Open the "playwright-report" folder
+3. Double-click "index.html" to open in your browser
+
+WHAT YOU'LL SEE:
+✓ 124 total tests executed
+✓ 84 tests passed (68%)
+✓ 40 tests failed (32%)
+✓ Interactive results with screenshots & videos
+
+FEATURES OF THE REPORT:
+- Click any test to see detailed execution
+- View screenshots of the app at time of failure
+- Watch videos of test execution
+- Filter by passed/failed/flaky
+- Search for specific tests
+- See exact error messages and stack traces
+
+BROWSERS:
+Works in any modern browser:
+- Chrome
+- Firefox
+- Safari
+- Edge
+
+NO INSTALLATION REQUIRED:
+This is a static HTML report - just open and view!
+
+TEST SUMMARY:
+=============
+Date: October 29, 2025
+Environment: Production (https://inspection-v2-580043464912.web.app)
+Duration: 2.2 minutes
+Browser: Chromium
+
+Features Tested:
+- Supervisor & Employee Authentication
+- Job Site Management (GPS, Maps, Imperial Units)
+- JSA Management (Creation, Filtering, Signatures)
+- Personnel Dashboard (Real-time Tracking)
+- Time History (GPS Verification, Location Maps)
+- Document Sharing (Upload, KMZ Preview)
+- Clock In/Out (GPS Capture & Verification)
+- Employee Views (JSA Library, Time History)
+
+For questions, see the included documentation files:
+- TEST-COVERAGE-MATRIX.md (detailed feature coverage)
+- TEST-EXECUTION-GUIDE.md (how to run tests yourself)
+- tests/README.md (complete testing guide)

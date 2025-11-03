@@ -1,0 +1,163 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e8]:
+        - heading "Supervisor Hub" [level=1] [ref=e9]
+        - paragraph [ref=e10]: Manage operations, safety, and compliance
+      - generic [ref=e11]:
+        - generic [ref=e13]:
+          - generic [ref=e15]: 👔
+          - generic [ref=e16]:
+            - heading "Supervisor Mode Active" [level=2] [ref=e17]
+            - paragraph [ref=e18]: Access all management tools and oversight features
+        - generic [ref=e20]:
+          - generic [ref=e22]: 📍
+          - generic [ref=e23]:
+            - generic [ref=e24]: Filter by Job Site
+            - combobox [ref=e25]:
+              - option "All Job Sites" [selected]
+        - generic [ref=e26]:
+          - heading "Management Tools" [level=2] [ref=e27]
+          - generic [ref=e28]:
+            - link "📋 JSA Management Create and manage Job Safety Analyses 3 active →" [ref=e29]:
+              - /url: /supervisor/jsas
+              - generic [ref=e30]:
+                - generic [ref=e31]:
+                  - generic [ref=e33]: 📋
+                  - generic [ref=e34]:
+                    - heading "JSA Management" [level=3] [ref=e35]
+                    - paragraph [ref=e36]: Create and manage Job Safety Analyses
+                - generic [ref=e37]:
+                  - generic [ref=e38]: 3 active
+                  - generic [ref=e39]: →
+            - link "🔍 Inspection History Review all completed inspections 0 today →" [ref=e40]:
+              - /url: /history
+              - generic [ref=e41]:
+                - generic [ref=e42]:
+                  - generic [ref=e44]: 🔍
+                  - generic [ref=e45]:
+                    - heading "Inspection History" [level=3] [ref=e46]
+                    - paragraph [ref=e47]: Review all completed inspections
+                - generic [ref=e48]:
+                  - generic [ref=e49]: 0 today
+                  - generic [ref=e50]: →
+            - link "👥 Personnel Tracking Real-time crew location dashboard 0 clocked in →" [ref=e51]:
+              - /url: /personnel
+              - generic [ref=e52]:
+                - generic [ref=e53]:
+                  - generic [ref=e55]: 👥
+                  - generic [ref=e56]:
+                    - heading "Personnel Tracking" [level=3] [ref=e57]
+                    - paragraph [ref=e58]: Real-time crew location dashboard
+                - generic [ref=e59]:
+                  - generic [ref=e60]: 0 clocked in
+                  - generic [ref=e61]: →
+        - generic [ref=e62]:
+          - heading "Administrative Tools" [level=2] [ref=e63]
+          - generic [ref=e64]:
+            - link "✓ SOP Acknowledgments Track operator compliance View history →" [ref=e65]:
+              - /url: /sop/history
+              - generic [ref=e66]:
+                - generic [ref=e67]:
+                  - generic [ref=e69]: ✓
+                  - generic [ref=e70]:
+                    - heading "SOP Acknowledgments" [level=3] [ref=e71]
+                    - paragraph [ref=e72]: Track operator compliance
+                - generic [ref=e73]:
+                  - generic [ref=e74]: View history
+                  - generic [ref=e75]: →
+            - link "📍 Job Sites Manage locations and geofences Manage sites →" [ref=e76]:
+              - /url: /job-sites
+              - generic [ref=e77]:
+                - generic [ref=e78]:
+                  - generic [ref=e80]: 📍
+                  - generic [ref=e81]:
+                    - heading "Job Sites" [level=3] [ref=e82]
+                    - paragraph [ref=e83]: Manage locations and geofences
+                - generic [ref=e84]:
+                  - generic [ref=e85]: Manage sites
+                  - generic [ref=e86]: →
+            - link "🔔 Alerts & Notifications GPS alerts and system notifications View alerts →" [ref=e87]:
+              - /url: /supervisor-alerts
+              - generic [ref=e88]:
+                - generic [ref=e89]:
+                  - generic [ref=e91]: 🔔
+                  - generic [ref=e92]:
+                    - heading "Alerts & Notifications" [level=3] [ref=e93]
+                    - paragraph [ref=e94]: GPS alerts and system notifications
+                - generic [ref=e95]:
+                  - generic [ref=e96]: View alerts
+                  - generic [ref=e97]: →
+        - generic [ref=e98]:
+          - heading "Reporting" [level=2] [ref=e99]
+          - generic [ref=e100]:
+            - link "📊 Daily Reports Site logs and daily summaries 0 today →" [ref=e101]:
+              - /url: /reports
+              - generic [ref=e102]:
+                - generic [ref=e103]:
+                  - generic [ref=e105]: 📊
+                  - generic [ref=e106]:
+                    - heading "Daily Reports" [level=3] [ref=e107]
+                    - paragraph [ref=e108]: Site logs and daily summaries
+                - generic [ref=e109]:
+                  - generic [ref=e110]: 0 today
+                  - generic [ref=e111]: →
+            - link "📁 Documents Job site blueprints and KMZ files View library →" [ref=e112]:
+              - /url: /documents
+              - generic [ref=e113]:
+                - generic [ref=e114]:
+                  - generic [ref=e116]: 📁
+                  - generic [ref=e117]:
+                    - heading "Documents" [level=3] [ref=e118]
+                    - paragraph [ref=e119]: Job site blueprints and KMZ files
+                - generic [ref=e120]:
+                  - generic [ref=e121]: View library
+                  - generic [ref=e122]: →
+        - generic [ref=e123]:
+          - heading "Quick Access" [level=3] [ref=e124]
+          - generic [ref=e125]:
+            - link "⏱️ Clock In/Out →" [ref=e126]:
+              - /url: /time-clock
+              - generic [ref=e127]:
+                - generic [ref=e128]:
+                  - generic [ref=e129]: ⏱️
+                  - generic [ref=e130]: Clock In/Out
+                - generic [ref=e131]: →
+            - link "🔧 Start Inspection →" [ref=e132]:
+              - /url: /inspect
+              - generic [ref=e133]:
+                - generic [ref=e134]:
+                  - generic [ref=e135]: 🔧
+                  - generic [ref=e136]: Start Inspection
+                - generic [ref=e137]: →
+            - link "📚 Library (JSAs & SOPs) →" [ref=e138]:
+              - /url: /library
+              - generic [ref=e139]:
+                - generic [ref=e140]:
+                  - generic [ref=e141]: 📚
+                  - generic [ref=e142]: Library (JSAs & SOPs)
+                - generic [ref=e143]: →
+    - navigation [ref=e144]:
+      - generic [ref=e145]:
+        - link "Dashboard" [ref=e146]:
+          - /url: /supervisor-hub
+          - img [ref=e148]
+          - generic [ref=e153]: Dashboard
+        - link "Personnel" [ref=e155]:
+          - /url: /personnel
+          - img [ref=e157]
+          - generic [ref=e162]: Personnel
+        - link "Library" [ref=e163]:
+          - /url: /library
+          - img [ref=e165]
+          - generic [ref=e168]: Library
+        - link "More" [ref=e169]:
+          - /url: /more
+          - img [ref=e171]
+          - generic [ref=e172]: More
+  - iframe [ref=e173]:
+    
+```

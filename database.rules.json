@@ -1,0 +1,187 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "v2": {
+      "inspections": {
+        ".read": "auth != null",
+        "$id": {
+          ".write": "!data.exists() && newData.child('operatorUid').val() == auth.uid",
+          ".validate": "newData.hasChildren(['equipmentType','equipmentId','operatorUid','state','startedAt','answers'])"
+        }
+      },
+      "byDate": {
+        ".read": "auth != null",
+        "$yyyymmdd": {
+          "$id": {
+            ".write": "auth != null"
+          }
+        }
+      },
+      "byStatusDate": {
+        ".read": "auth != null",
+        "$status": {
+          "$yyyymmdd": {
+            "$id": {
+              ".write": "auth != null"
+            }
+          }
+        }
+      },
+      "byEquipmentDate": {
+        ".read": "auth != null",
+        "$equipType": {
+          "$yyyymmdd": {
+            "$id": {
+              ".write": "auth != null"
+            }
+          }
+        }
+      },
+      "byOperatorDate": {
+        "$operatorUid": {
+          ".read": "$operatorUid === auth.uid || auth != null",
+          "$yyyymmdd": {
+            "$id": {
+              ".write": "auth != null"
+            }
+          }
+        }
+      },
+      "inspectionEvents": {
+        "$inspId": {
+          ".read": "auth != null",
+          "$evId": {
+            ".write": "auth != null"
+          }
+        }
+      },
+      "jsas": {
+        ".read": "auth != null",
+        "$id": {
+          ".write": "(
+            !data.exists() &&
+            root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'
+          ) || (
+            data.exists() &&
+            (data.child('createdBy').val() === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor')
+          )",
+          ".validate": "newData.hasChildren(['title','hazards','controls','createdBy','createdAt','status']) && (
+            !data.exists() ||
+            (newData.child('status').val() === data.child('status').val() || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor')
+          )"
+        }
+      },
+      "jsaSignatures": {
+        "$jsaId": {
+          ".read": "auth != null",
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['name','signedAt','signatureDataUrl'])"
+          }
+        }
+      },
+      "sops": {
+        ".read": "auth != null",
+        "$sopId": {
+          ".write": "root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'"
+        }
+      },
+      "sopAcknowledgments": {
+        "$sopId": {
+          ".read": "auth != null",
+          "$userId": {
+            ".write": "auth.uid === $userId"
+          }
+        }
+      },
+      "userSopAcknowledgments": {
+        "$userId": {
+          ".read": "$userId === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+          "$sopId": {
+            ".write": "auth.uid === $userId"
+          }
+        }
+      },
+      "sopAcknowledgmentEvents": {
+        ".read": "root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+        "$eventId": {
+          ".write": "auth != null"
+        }
+      },
+      "users": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "$uid === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+          ".validate": "newData.hasChildren(['email','displayName','role','createdAt','disabled'])"
+        }
+      },
+      "jobSites": {
+        ".read": "auth != null",
+        "$siteId": {
+          ".write": "root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+          ".validate": "newData.hasChildren(['name','location','radiusMeters','address','active','createdBy','createdAt'])"
+        }
+      },
+      "dailyReports": {
+        ".read": "root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+        "$reportId": {
+          ".write": "!data.exists() && newData.child('createdBy').val() === auth.uid",
+          ".validate": "newData.hasChildren(['date','dayKey','siteId','siteName','shiftStart','shiftEnd','tasksPerformed','signatureDataUrl','createdBy','createdAt'])"
+        }
+      },
+      "timeEntries": {
+        "$userId": {
+          ".read": "$userId === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+          "$entryId": {
+            ".write": "auth.uid === $userId"
+          }
+        }
+      },
+      "activeSessions": {
+        ".read": "auth != null",
+        "$userId": {
+          ".write": "auth.uid === $userId"
+        }
+      },
+      "sitePersonnel": {
+        "$siteId": {
+          ".read": "auth != null",
+          "$userId": {
+            ".write": "auth.uid === $userId"
+          }
+        }
+      },
+      "siteTimeEntries": {
+        "$siteId": {
+          ".read": "root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+          "$entryId": {
+            ".write": "auth != null && (( !data.exists() && newData.child('userId').val() === auth.uid ) || ( data.exists() && ( data.child('userId').val() === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor' ) ))"
+          }
+        }
+      },
+      "supervisorAlerts": {
+        "$supervisorId": {
+          ".read": "$supervisorId === auth.uid",
+          "$alertId": {
+            ".write": "auth != null"
+          }
+        }
+      },
+      "userSiteRestrictions": {
+        "$userId": {
+          ".read": "$userId === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'",
+          "$siteId": {
+            ".write": "root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor'"
+          }
+        }
+      },
+      "timeSessions": {
+        ".read": "auth != null",
+        "$sessionId": {
+          ".write": "auth != null && (!data.exists() || data.child('uid').val() === auth.uid || root.child('v2/users/' + auth.uid + '/role').val() === 'supervisor')"
+        }
+      }
+    }
+  }
+}

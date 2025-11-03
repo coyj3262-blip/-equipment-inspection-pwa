@@ -1,0 +1,22 @@
+{
+  "name": "Equipment Inspector Pro",
+  "short_name": "Inspector Pro",
+  "description": "Professional heavy equipment inspection system with time tracking",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1E3A8A",
+  "orientation": "portrait-primary",
+  "categories": ["productivity", "business"],
+  "permissions": [
+    "geolocation"
+  ],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
