@@ -40,3 +40,14 @@ coverage/
 *.tmp
 .cache/
 firebase-service-account-2.json
+
+# Admin scripts with hardcoded credentials
+create-accounts*.js
+create-users*.js
+set-supervisor-claim.js
+
+# Test fixtures
+tests/fixtures/auth.ts
+
+# Scripts with sensitive data
+*-admin.js
